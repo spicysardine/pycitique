@@ -1,0 +1,60 @@
+.
+├── data
+│   └── citique.db
+├── GIS
+│   ├── canvas_extraction_stations_42_pts.png
+│   ├── canvas_extraction_stations_700_pts.png
+│   ├── citickMap_departement.pdf
+│   ├── citickMap_nbr_tiques_france_heatmap.png
+│   ├── citickMap_nbr_tiques_france_heatmap_points_overlay.png
+│   ├── citickMap_nbr_tiques_france_print_aio_fira2.png
+│   ├── citickMap_nbr_tiques_france_print_aio_fira.png
+│   ├── citickMap_nbr_tiques_france_print_aio.png
+│   ├── citickMap_region.pdf
+│   ├── citik_map_nbr_ticks_france_display_aio.png
+│   ├── repartition_stations_meteo.png
+│   ├── timeline_citik_heatmap_cumulative.mp4
+│   ├── timeline_citik_heatmap_progressive.mp4
+│   ├── timeline_citik_signalement_cumulative.mp4
+│   └── timeline_citik_signalement_progressive.mp4
+├── LICENSE
+├── PDF
+│   ├── article
+│   │   └── signalements_meteo.pdf
+│   ├── citik_maille_42
+│   │   └── humains_42
+│   │       ├── citik_humains_analyse_moyenne_kh.pdf
+│   │       ├── citik_humains_DSK_vs_DSK_charts.pdf
+│   │       └── citik_humains_DSK_vs_MF_charts.pdf
+│   ├── citik_maille_700
+│   │   └── humains_700
+│   │       ├── citik_femme_DSK_vs_DSK_maille_700_charts.pdf
+│   │       ├── citik_homme_DSK_vs_DSK_maille_700_charts.pdf
+│   │       └── citik_humains_DSK_vs_DSK_maille_700_charts.pdf
+│   └── documentation
+│       ├── guideDarksky.pdf
+│       └── guideMeteofrance.pdf
+├── project_tree.txt
+├── python
+│   ├── __init__.py
+│   ├── parallel_task_animals.py
+│   ├── parallel_task_humans.py
+│   ├── __pycache__
+│   │   └── pycitique.cpython-36.pyc
+│   └── pycitique.py
+├── R
+│   └── citik_humains
+│       ├── dsk_vs_mf_moyennes_france.png
+│       ├── france_plot_grid.pdf
+│       ├── humdata_vs_dsk_random700_al.png
+│       ├── humdata_vs_dsk_random700_france.png
+│       ├── humdata_vs_dsk_random700_idf.png
+│       ├── humdata_vs_dsk_random700_ra.png
+│       ├── humidity_plot_grid.pdf
+│       ├── idf_plot_grid.pdf
+│       ├── smartick_hum_meteo_analyse_statisitique.R
+│       ├── smartick_hum_meteo_analyse_statisitique.Rproj
+│       └── temperature_plot_grid.pdf
+└── README.md
+
+13 directories, 44 files
