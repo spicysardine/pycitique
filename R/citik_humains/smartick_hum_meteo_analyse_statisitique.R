@@ -58,7 +58,6 @@ getwd()
 # le script ne se lancera pas correctement sans
 # l’invocation prelalable de ces librairies
 require(RSQLite)
-# require(piggyback)
 require(ggplot2)
 require(cowplot)
 require(DT)
@@ -72,15 +71,10 @@ require(utils)
 # centrale, sans toutefois de versionnement pris en charge par celui-ci
 # le telechargement prealable est une etape obligatoire suite au clonage
 # du projet sur la machine locale. Une connexion a internet est egalement requise
-# pour ceci il est indispensable d’instraller le paquet piggyback
+# ces opération sont effectuées lors du téléchargement (clonage) du projet
 
-# Authentification avec le compte GitHub accueillant le projet.
-# Cette ligne d’authentification est necessaire mais provisoir, le temps de basculer
-# le projet en mode publique.
-# Sys.setenv(GITHUB_TOKEN="token_here")
 datapath='../../data/'
 target='citique.zip'
-pb_download(file=target, repo = 'spicysardine/pycitique', dest = datapath)
 target=paste0(datapath,target)
 unzip(target, exdir=datapath)
 print('Génération des objets à partir de la base. Veuillez patienter ...')
