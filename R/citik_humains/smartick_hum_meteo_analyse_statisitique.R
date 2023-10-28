@@ -398,6 +398,7 @@ shapiro_batch <- function (dsk_paramnames, mf_paramnames){
     return(listShapiro)
     
   }
+  
   # boucle de remplissage de la liste de correspondance
   for (i in 1:11){
     #cat(dsk_paramnames[i], '|------>', mf_paramnames[i],'\n')
@@ -549,20 +550,23 @@ plotstyle <-  theme(plot.title = element_text(hjust = .5, face = 'bold', size = 
 # et retourne un objet de type liste contenant les graphiques
 # des analyse. Le resultat peut etre ensuite utilise avec 
 # une librairie d’aggregation de graphiaues comme cowplot
+# Le nombre de parametres fut reduit de 12 à 5 suite à la recommendation des relecteurs
+# modif du 2023-10-28 Khi.
 weatherPlotGrid <- function(param, mode){
-  
+    
     paramlist <- list("temperature"='Temperature (°C)',
-                      "temperaturehigh"='Day temperature (°C)',
-                      "temperaturelow"='Night temperature',
+                      # "temperaturehigh"='Day temperature (°C)',
+                      # "temperaturelow"='Night temperature',
                       'humidity'='Humidity (%)',
                       "dewpoint"='Dewpoint (°C)',
                       "pressure"='Atmospheric Pressure (hPa)',
-                      "windspeed"='Windspeed (m/s)',
-                      "visibility"='Visibility (km)',
-                      "cloudcover"='Cloud cover (%)',
-                      'precipintensity'='Precipitation Intensity mm/h',
-                      "windgust"='Wind Gust (m/s)',
-                      'uvindex'='UV Index (scale 1 to 10)')
+                      "windspeed"='Windspeed (m/s)'
+                      # "visibility"='Visibility (km)',
+                      # "cloudcover"='Cloud cover (%)',
+                      # 'precipintensity'='Precipitation Intensity mm/h',
+                      # "windgust"='Wind Gust (m/s)',
+                      # 'uvindex'='UV Index (scale 1 to 10)'
+                      )
     
     datalist <- list('france'=list('name'='France', 'report'=humdata, 'witness'=DSKdata_700avg ),
                      'idf'=list('name'='île-de-France', 'report'=humdata_idf, 'witness'=DSKdata_700avg_idf ),
@@ -688,7 +692,7 @@ weatherPlotGrid <- function(param, mode){
       # Cette fonction retourne un objet de type liste contenant
       # les graphiques generes contenant les analyse. Le resultat peut
       # etre ensuite aggrege avec une librairie d’aggregation de graphiaues comme cowplot
-      plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=3, nrow=4, align = 'hv')
+      plotgrid <- plot_grid(plotlist=graphlist, labels = 'AUTO', ncol=2, nrow=3, align = 'hv')
       
       return(plotgrid)
       
@@ -770,7 +774,7 @@ datatable(ic_hiver_short_quartile)
 print('Fin des calculs des tableaux d’intervals de confiance')
 
 ## Vecteurs de caracteres contenant les parametres meteo a comparer un a un
-dsk_paramnames <- c("temperature", "temperaturelow", "temperaturehigh", 
+dsk_paramnames <- c("temperature", "temperaturelow", "temperaturehigh",
                           "humidity", "dewpoint", "pressure", "windspeed",
                             "visibility", "cloudcover", "windgust", 'precipintensity', 'uvindex')
 mf_paramnames <- c('temperature', 'temperature_nocturne', 'temperature_diurne',
@@ -799,6 +803,7 @@ datatable(k)
 print('Fin des tests statistiques')
 
 print('Début de fabrication des graphiques')
+
 ### Fabrication rapide et automatique des graphiques DSK moyennes vs MF moyennes
 # ces lignes fabriquent automatiquement tous les graphs de l’article
 # la fonction batch_histogram renvoi une liste contenant les graphs fabriques
@@ -813,9 +818,12 @@ title_g <- ggdraw(bkg) + draw_label(title_text_g, fontface='bold', size = 12, li
 weather_gridplot_g <- plot_grid(title_g, weather_gridplot_g, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
 plotsave(weather_gridplot_g, 'dsk_vs_mf_moyennes_france.png', format='landscape', extension='png')
 
+## Vecteurs de caracteres contenant les parametres meteo a comparer un a un  (Modifiés suite à relecture Cybergeo)
+dsk_paramnames <- c("temperature", "humidity", "dewpoint", "pressure", "windspeed")
+
 ### Fabrication rapide et automatique des graphiques human data vs DSK moyennes semi 700 pts
 h <- batch_histogram(humdata, DSKdata_700avg, dsk_paramnames, dsk_paramnames)
-weather_gridplot_h <- plot_grid(plotlist=h, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
+weather_gridplot_h <- plot_grid(plotlist=h, labels = "AUTO", ncol=2, nrow = 3 , align = 'hv')
 title_text_h <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
 title_h <- ggdraw(bkg) + draw_label(title_text_h, fontface='bold', size = 12, lineheight = 0.3)
 weather_gridplot_h <- plot_grid(title_h, weather_gridplot_h, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
@@ -824,7 +832,7 @@ plotsave(weather_gridplot_h, 'humdata_vs_dsk_random700_france.png', format='land
 ### Gridplots regeionaux
 # idf
 idf <- batch_histogram(humdata_idf, DSKdata_700avg_idf, dsk_paramnames, dsk_paramnames)
-weather_gridplot_idf <- plot_grid(plotlist=idf, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
+weather_gridplot_idf <- plot_grid(plotlist=idf, labels = "AUTO", ncol=2, nrow = 3 , align = 'hv')
 title_text_idf <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (île-de-France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
 title_idf <- ggdraw(bkg) + draw_label(title_text_idf, fontface='bold', size = 12, lineheight = 0.3)
 weather_gridplot_idf <- plot_grid(title_idf, weather_gridplot_idf, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
@@ -832,7 +840,7 @@ plotsave(weather_gridplot_idf, 'humdata_vs_dsk_random700_idf.png', format='lands
 
 # alsace
 al <- batch_histogram(humdata_al, DSKdata_700avg_al, dsk_paramnames, dsk_paramnames)
-weather_gridplot_al <- plot_grid(plotlist=al, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
+weather_gridplot_al <- plot_grid(plotlist=al, labels = "AUTO", ncol=2, nrow = 3 , align = 'hv')
 title_text_al <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (Alsace, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
 title_al <- ggdraw(bkg) + draw_label(title_text_al, fontface='bold', size = 12, lineheight = 0.3)
 weather_gridplot_al <- plot_grid(title_al, weather_gridplot_al, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
@@ -840,14 +848,13 @@ plotsave(weather_gridplot_al, 'humdata_vs_dsk_random700_al.png', format='landsca
 
 #ra
 ra <- batch_histogram(humdata_ra, DSKdata_700avg_ra, dsk_paramnames, dsk_paramnames)
-weather_gridplot_ra <- plot_grid(plotlist=ra, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
+weather_gridplot_ra <- plot_grid(plotlist=ra, labels = "AUTO", ncol=2, nrow = 3 , align = 'hv')
 title_text <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (Rhône-Alpes, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
 title <- ggdraw(bkg) + draw_label(title_text, fontface='bold', size = 12, lineheight = 0.3)
 weather_gridplot_ra <- plot_grid(title, weather_gridplot_ra, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
 plotsave(weather_gridplot_ra, 'humdata_vs_dsk_random700_ra.png', format='landscape', extension='png')
 
 # Production automatique des grilles des graphiques des séries temporelles
-
 t <- weatherPlotGrid('temperature', mode='param')
 plotsave(t, 'temperature_plot_grid.pdf', format='landscape', extension='pdf')
 
