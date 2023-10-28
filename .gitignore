@@ -4,8 +4,5 @@
 .Ruserdata
 data/citique.db
 data/citique.zip
-R/citik_humains/france_plot_grid.pdf
-R/citik_humains/humidity_plot_grid.pdf
-R/citik_humains/idf_plot_grid.pdf
-R/citik_humains/temperature_plot_grid.pdf
-
+R/citik_humains/*.pdf
+R/citik_humains/*.png
