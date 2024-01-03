@@ -215,19 +215,25 @@ ic_calculator <- function(param, calcul){
           humDF$upper_quantile[i] <- quantile(sample(param, 50, replace=T), 0.75, na.rm = T)
     }
   # Calcul de centiles
-  # }else if (calcul=='decile'){    
-  }else if (calcul=='centile'){
-          
+  }else if (calcul=='decile'){
+    
     for (i in 1:1000){
-          
-          # humDF$lower_quantile[i] <- quantile(sample(param, 50, replace=T), 0.1, na.rm = T)
-          # humDF$middl_quantile[i] <- mean(sample(param, 50, replace=T), na.rm = T)
-          # humDF$upper_quantile[i] <- quantile(sample(param, 50, replace=T), 0.9, na.rm = T)
+      
+      humDF$lower_quantile[i] <- quantile(sample(param, 50, replace=T), 0.1, na.rm = T)
+      humDF$middl_quantile[i] <- mean(sample(param, 50, replace=T), na.rm = T)
+      humDF$upper_quantile[i] <- quantile(sample(param, 50, replace=T), 0.9, na.rm = T)
+      
+    }    
+    
+  # Calcul de centiles
+  }else if (calcul=='centile'){
+      
+    for (i in 1:1000){
       
       # Modif Vg 29 oct 2023
-          humDF$lower_quantile[i] <- quantile(sample(param, 50, replace=T), 0.06, na.rm = T)
-          humDF$middl_quantile[i] <- mean(sample(param, 50, replace=T), na.rm = T)
-          humDF$upper_quantile[i] <- quantile(sample(param, 50, replace=T), 0.94, na.rm = T)          
+      humDF$lower_quantile[i] <- quantile(sample(param, 50, replace=T), 0.06, na.rm = T)
+      humDF$middl_quantile[i] <- mean(sample(param, 50, replace=T), na.rm = T)
+      humDF$upper_quantile[i] <- quantile(sample(param, 50, replace=T), 0.94, na.rm = T)          
     }
           
   } else{
@@ -740,6 +746,12 @@ vectornames <- c("temperature",  "temperaturelow", "temperaturehigh", "humidity"
 # France entiere
 france_quartile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='quartile')
 datatable(france_quartile)
+
+france_decile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='decile')
+datatable(france_decile)
+
+france_centile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='centile')
+datatable(france_centile)
 
 print('Fin des calculs des tableaux d’intervals de confiance')
 
