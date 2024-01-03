@@ -214,13 +214,20 @@ ic_calculator <- function(param, calcul){
           humDF$middl_quantile[i] <- quantile(sample(param, 50, replace=T), 0.50, na.rm = T)
           humDF$upper_quantile[i] <- quantile(sample(param, 50, replace=T), 0.75, na.rm = T)
     }
-  # Calcul de deciles        
-  }else if (calcul=='decile'){
+  # Calcul de centiles
+  # }else if (calcul=='decile'){    
+  }else if (calcul=='centile'){
           
     for (i in 1:1000){
-          humDF$lower_quantile[i] <- quantile(sample(param, 50, replace=T), 0.1, na.rm = T)
+          
+          # humDF$lower_quantile[i] <- quantile(sample(param, 50, replace=T), 0.1, na.rm = T)
+          # humDF$middl_quantile[i] <- mean(sample(param, 50, replace=T), na.rm = T)
+          # humDF$upper_quantile[i] <- quantile(sample(param, 50, replace=T), 0.9, na.rm = T)
+      
+      # Modif Vg 29 oct 2023
+          humDF$lower_quantile[i] <- quantile(sample(param, 50, replace=T), 0.06, na.rm = T)
           humDF$middl_quantile[i] <- mean(sample(param, 50, replace=T), na.rm = T)
-          humDF$upper_quantile[i] <- quantile(sample(param, 50, replace=T), 0.9, na.rm = T)
+          humDF$upper_quantile[i] <- quantile(sample(param, 50, replace=T), 0.94, na.rm = T)          
     }
           
   } else{
@@ -307,7 +314,7 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
 
 }
 
-### 6. Fonctions de abrication des graphiques comparatifs avec ggplot2
+### 6. Fonctions de fabrication des graphiques comparatifs avec ggplot2
 # La fonction retourne un objet de type liste contenant les graphiques 
 # des analyses. Le resultat peut etre ensuite utilise avec 
 # une librairie d’aggregation de graphiaues comme cowplot
@@ -581,10 +588,10 @@ weatherPlotGrid <- function(param, mode){
       paramname <- paramlist[[param]]
       
       ## General theme
-      legende <- c('Reports'='#0000ff',
-                   'Reports Model'='#000000',
-                   'Random Witness'='#00ff00',
-                   'Random Witness Model'='#ff0000',
+      legende <- c('Signalements'='#0000ff',
+                   'Signalements Modèle'='#000000',
+                   'Semis Régulier'='#00ff00',
+                   'Semis Régulier Modèle'='#ff0000',
                    'Equinox'='orange',
                    'Solstice'='grey50')
       # Explication détaillée du graphique
@@ -597,20 +604,20 @@ weatherPlotGrid <- function(param, mode){
       # la température moyenne obtenue en moyennant temphigh et templow
       ggplot(reportdata, aes(x=date_piqure_saisie))+
         # c'est la ligne qui affiche les poctuels des signalements
-        geom_jitter(aes(y=reportdata[,param], color='Reports'), size=.1, alpha=.6)+
+        geom_jitter(aes(y=reportdata[,param], color='Signalements'), size=.1, alpha=.6)+
         # Cette ligne établit la courbe lisse noire des poinctuels
         # par défaut elle utilise la méthode GAM ou general additive method si le nombre de points est
         # supérieur à 1000, en utilisant en arrière plan la méthode method="gam", formula = y ~ s(x)
         # comme paramètre, donc la fonction s(x) du packet R mgcv
         # pour plus de détail consultez les références d'explication de la méthode additive 
-        geom_smooth(method = 'gam', formula=y~s(x, bs = "cs"), aes(y=reportdata[,param], color='Reports Model'), size=.5)+
+        geom_smooth(method = 'gam', formula=y~s(x, bs = "cs"), aes(y=reportdata[,param], color='Signalements Modèle'), size=.5)+
         #cette lingne de code établit la ligne verte de la température témoin
         geom_line(data = witnessdata,
-                  aes(date_releve, witnessdata[,param], color='Random Witness'),
+                  aes(date_releve, witnessdata[,param], color='Semis Régulier'),
                   size=.4,
                   alpha=.7)+
         #Meme chose que ci-dessus mais courebe lisse rouge de la donnée météo, donc température témoin
-        geom_smooth(method = 'gam', formula=y~s(x, bs = "cs"), data=witnessdata, aes(date_releve, witnessdata[,param], color='Random Witness Model'), size=.3)+
+        geom_smooth(method = 'gam', formula=y~s(x, bs = "cs"), data=witnessdata, aes(date_releve, witnessdata[,param], color='Semis Régulier Modèle'), size=.3)+
         geom_line(y=0, colour='black', linetype='dotted', alpha=.7, size=.5)+
         # equinox du printemps
         geom_vline(xintercept=as.Date(c( '2017-03-21', '2018-03-21', '2019-03-21','2020-03-21' )),
@@ -637,15 +644,15 @@ weatherPlotGrid <- function(param, mode){
                    alpha=.8,
                    size=.5)+
         #titre du graph
-        ggtitle(paste('Seasonal distribution of ',paramname,' associated with reports vs witnesses
-                               measurements in ',region,' from 2017-03-31 to 2020-04-01'))+
+        ggtitle(paste('Profil temporel de "',paramname,'" associée aux 14 657 lieux et dates de signalements comparés 
+                               à ceux des mêmes dates mais pour un semis régulier de lieux: ',region,' de 2017-03-31 à 2020-04-01'))+
         xlab(label = 'Date')+
         ylab(label=paramname)+
-        labs(color='Legend: ')+
+        labs(color='Légende: ')+
         # les thèmes et labels des axes
         theme(axis.text.x = element_text(angle = 35, color='grey20', size = 9, vjust = 1, hjust = 1))+
         # theme(axis.text.y = element_text(color='grey20', size = 6) )+
-        theme(legend.position = 'top', legend.text = (element_text(size = 9)))+
+        theme(legend.position = 'top', legend.text = (element_text(size = 8)))+
         # Les elements de la legende en une seule rangee
         guides(col=guide_legend(nrow = 1))+
         #Cette ligne est facultative, elle sert uniquement au cas où on a besoin
@@ -733,43 +740,6 @@ vectornames <- c("temperature",  "temperaturelow", "temperaturehigh", "humidity"
 # France entiere
 france_quartile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='quartile')
 datatable(france_quartile)
-#idf
-idf_decile <- ic_table_maker(humdata_idf, DSKdata_idf, vectornames, calcul='decile')
-datatable(idf_decile)
-#alsace
-alsace_decile <- ic_table_maker(humdata_al, DSKdata_al, vectornames, calcul='decile')
-datatable(alsace_decile)
-#rhone-alpes
-rhone_alpes_decile <- ic_table_maker(humdata_ra, DSKdata_ra, vectornames, calcul='decile')
-datatable(rhone_alpes_decile)
-
-## Periode hivernale longue deciles
-ic_hiver_long_decile <- ic_table_maker(humdata_winter_long,
-                                       DSKdata_winter_long,
-                                       vectornames,
-                                       calcul='decile')
-datatable(ic_hiver_long_decile)
-
-# Periode hivernale courte deciles
-ic_hiver_short_decile <- ic_table_maker(humdata_winter_short,
-                                        DSKdata_winter_short,
-                                        vectornames,
-                                        calcul='decile')
-datatable(ic_hiver_short_decile)
-
-# Periode hivernale longue quartiles
-ic_hiver_long_quartile <- ic_table_maker(humdata_winter_long,
-                                       DSKdata_winter_long,
-                                       vectornames,
-                                       calcul='quartile')
-datatable(ic_hiver_long_quartile)
-
-# Periode hivernale courte quartiles
-ic_hiver_short_quartile <- ic_table_maker(humdata_winter_short,
-                                        DSKdata_winter_short,
-                                        vectornames,
-                                        calcul='quartile')
-datatable(ic_hiver_short_quartile)
 
 print('Fin des calculs des tableaux d’intervals de confiance')
 
@@ -811,61 +781,28 @@ print('Début de fabrication des graphiques')
 g <- batch_histogram(DSKdata_42avg, MFdata, dsk_paramnames[-12], mf_paramnames)
 # commande courte mais sans possibilite d’arrangement des positions
 weather_gridplot_g <- plot_grid(plotlist=g, labels = "AUTO", ncol=3, nrow = 4 , align = 'hv')
-title_text_g <- paste('Average parameters for 42 Météo France Synoptic Stations vs DarkSky (France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
+title_text_g <- paste('Profils comparés de 11 paramètres climatiques pour 42 stations synoptiques de Météo-France et leur équivalent Dark Sky (France, Janvier 2017 – Avril 2020), ',nrow(DSKdata_700avg),' jours')
 bkg <- ggplot()
 title_g <- ggdraw(bkg) + draw_label(title_text_g, fontface='bold', size = 12, lineheight = 0.3)
 # rel_heights values control title margins
 weather_gridplot_g <- plot_grid(title_g, weather_gridplot_g, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
-plotsave(weather_gridplot_g, 'dsk_vs_mf_moyennes_france.png', format='landscape', extension='png')
+plotsave(weather_gridplot_g, 'fig_3_profils_compares_11_param_clim_42_stations_synoptiques_Meteo-France_vs_dsk_print_fr.png', format='landscape', extension='png')
 
 ## Vecteurs de caracteres contenant les parametres meteo a comparer un a un  (Modifiés suite à relecture Cybergeo)
 dsk_paramnames <- c("temperature", "humidity", "dewpoint", "pressure", "windspeed")
 
+# Production automatique des grilles des graphiques des séries temporelles
+f <- weatherPlotGrid('france', mode='region')
+plotsave(f, 'fig_4_profils_temporels_variables_meteo_associes_aux_lieux_dates_signalements_compares_aux_semis_reguliers_print_fr.png', format='landscape', extension='png')
+
 ### Fabrication rapide et automatique des graphiques human data vs DSK moyennes semi 700 pts
 h <- batch_histogram(humdata, DSKdata_700avg, dsk_paramnames, dsk_paramnames)
 weather_gridplot_h <- plot_grid(plotlist=h, labels = "AUTO", ncol=2, nrow = 3 , align = 'hv')
-title_text_h <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
+title_text_h <- paste('Profils météorologiques associés aux ',nrow(humdata),' lieux et dates de signalements comparés à ceux des mêmes dates mais pour un semis régulier de lieux (France, Janvier 2017 – 5 Avril 2020), ',nrow(DSKdata_700avg),' jours')
 title_h <- ggdraw(bkg) + draw_label(title_text_h, fontface='bold', size = 12, lineheight = 0.3)
 weather_gridplot_h <- plot_grid(title_h, weather_gridplot_h, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
-plotsave(weather_gridplot_h, 'humdata_vs_dsk_random700_france.png', format='landscape', extension='png')
+plotsave(weather_gridplot_h, 'fig_5_profils_meteorologiques_associes_aux_lieux_dates_signalements_compares_aux_semis_regulier_des_lieux_print_fr.png', format='landscape', extension='png')
 
-### Gridplots regeionaux
-# idf
-idf <- batch_histogram(humdata_idf, DSKdata_700avg_idf, dsk_paramnames, dsk_paramnames)
-weather_gridplot_idf <- plot_grid(plotlist=idf, labels = "AUTO", ncol=2, nrow = 3 , align = 'hv')
-title_text_idf <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (île-de-France, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
-title_idf <- ggdraw(bkg) + draw_label(title_text_idf, fontface='bold', size = 12, lineheight = 0.3)
-weather_gridplot_idf <- plot_grid(title_idf, weather_gridplot_idf, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
-plotsave(weather_gridplot_idf, 'humdata_vs_dsk_random700_idf.png', format='landscape', extension='png')
-
-# alsace
-al <- batch_histogram(humdata_al, DSKdata_700avg_al, dsk_paramnames, dsk_paramnames)
-weather_gridplot_al <- plot_grid(plotlist=al, labels = "AUTO", ncol=2, nrow = 3 , align = 'hv')
-title_text_al <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (Alsace, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
-title_al <- ggdraw(bkg) + draw_label(title_text_al, fontface='bold', size = 12, lineheight = 0.3)
-weather_gridplot_al <- plot_grid(title_al, weather_gridplot_al, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
-plotsave(weather_gridplot_al, 'humdata_vs_dsk_random700_al.png', format='landscape', extension='png')
-
-#ra
-ra <- batch_histogram(humdata_ra, DSKdata_700avg_ra, dsk_paramnames, dsk_paramnames)
-weather_gridplot_ra <- plot_grid(plotlist=ra, labels = "AUTO", ncol=2, nrow = 3 , align = 'hv')
-title_text <- paste('Comparaison of average weather parameters on ',nrow(humdata),' tick reportings (Rhône-Alpes, january 2017 - april 2020), ',nrow(DSKdata_700avg),' days')
-title <- ggdraw(bkg) + draw_label(title_text, fontface='bold', size = 12, lineheight = 0.3)
-weather_gridplot_ra <- plot_grid(title, weather_gridplot_ra, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
-plotsave(weather_gridplot_ra, 'humdata_vs_dsk_random700_ra.png', format='landscape', extension='png')
-
-# Production automatique des grilles des graphiques des séries temporelles
-t <- weatherPlotGrid('temperature', mode='param')
-plotsave(t, 'temperature_plot_grid.pdf', format='landscape', extension='pdf')
-
-h <- weatherPlotGrid('humidity', mode='param')
-plotsave(h, 'humidity_plot_grid.pdf', format='landscape', extension='pdf')
-
-g <- weatherPlotGrid('idf', mode='region')
-plotsave(g, 'idf_plot_grid.pdf', format='landscape', extension='pdf')
-
-f <- weatherPlotGrid('france', mode='region')
-plotsave(f, 'france_plot_grid.pdf', format='landscape', extension='pdf')
 
 
 end_program = Sys.time()
