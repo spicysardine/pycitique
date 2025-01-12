@@ -3,7 +3,6 @@
 .RData
 .Ruserdata
 data/citique.db
-data/citique.zip
 R/citik_humains/*.pdf
 R/citik_humains/*.png
 python/__pycache__/
