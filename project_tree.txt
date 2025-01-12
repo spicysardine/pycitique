@@ -57,4 +57,4 @@
 │       └── temperature_plot_grid.pdf
 └── README.md
 
-13 directories, 44 files
+13 directories, 44 file
