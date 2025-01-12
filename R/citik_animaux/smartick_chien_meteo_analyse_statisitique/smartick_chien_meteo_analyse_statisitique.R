@@ -76,7 +76,7 @@ require(utils)
 datapath='../../../data/'
 target='citique.zip'
 target=paste0(datapath,target)
-#unzip(target, exdir=datapath)
+unzip(target, exdir=datapath)
 print('Génération des objets à partir de la base. Veuillez patienter ...')
 
 # Etablissement de la connexion avec la base SQLite
