@@ -73,7 +73,7 @@ require(utils)
 # du projet sur la machine locale. Une connexion a internet est egalement requise
 # ces opération sont effectuées lors du téléchargement (clonage) du projet
 
-datapath='../../data/'
+datapath='../../../data/'
 target='citique.zip'
 target=paste0(datapath,target)
 unzip(target, exdir=datapath)
@@ -81,7 +81,7 @@ print('Génération des objets à partir de la base. Veuillez patienter ...')
 
 # Etablissement de la connexion avec la base SQLite
 sqlitedrv <- RSQLite::SQLite()
-sqlitedb <- dbConnect(sqlitedrv, '../../data/citique.db')
+sqlitedb <- dbConnect(sqlitedrv, '../../../data/citique.db')
 # Recurperation de la liste des tables utiles
 tablist <- dbListTables(sqlitedb)
 
