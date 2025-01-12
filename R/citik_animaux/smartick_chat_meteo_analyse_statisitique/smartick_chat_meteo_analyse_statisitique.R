@@ -73,7 +73,7 @@ require(utils)
 # du projet sur la machine locale. Une connexion a internet est egalement requise
 # ces opération sont effectuées lors du téléchargement (clonage) du projet
 
-datapath='../../data/'
+datapath='../../../data/'
 target='citique.zip'
 target=paste0(datapath,target)
 #unzip(target, exdir=datapath)
@@ -81,7 +81,7 @@ print('Génération des objets à partir de la base. Veuillez patienter ...')
 
 # Etablissement de la connexion avec la base SQLite
 sqlitedrv <- RSQLite::SQLite()
-sqlitedb <- dbConnect(sqlitedrv, '../../data/citique.db')
+sqlitedb <- dbConnect(sqlitedrv, '../../../data/citique.db')
 # Recurperation de la liste des tables utiles
 tablist <- dbListTables(sqlitedb)
 
@@ -105,10 +105,14 @@ print('Fin de la génération des objets')
 # La BDD SQLite sauvegarde le dates sous format text
 # avant d’utiliser les jeux de donnees on converti 
 # les colonnes date au format approprie
+
+#filtrer uniquement les enregistrement pour chats:
+catdata <- animdata[animdata$qui_pique == 'Chat',]
+
 MFdata$date_iso <- as.Date(MFdata$date_iso)
 DSKdata$date_releve <- as.Date(DSKdata$date_releve)
 DSKdata_42avg$date_releve <- as.Date(DSKdata_42avg$date_releve) 
-humdata$date_piqure_saisie <- as.Date(humdata$date_piqure_saisie)
+catdata$date_piqure_saisie <- as.Date(catdata$date_piqure_saisie)
 DSKdata_700avg$date_releve <- as.Date(DSKdata_700avg$date_releve) 
 DSKdata_700avg_al$date_releve <- as.Date(DSKdata_700avg_al$date_releve) 
 DSKdata_700avg_ra$date_releve <- as.Date(DSKdata_700avg_ra$date_releve) 
@@ -126,28 +130,28 @@ MFdata$nebulosite_ceiling <- ceiling(MFdata$nebulosite)
 
 ## 2.4.1 Création du subset pour l'IDF:
 # signalements
-humdata_idf <- humdata[humdata$departement_code %in% c("75","77","78",91:95),]
+catdata_idf <- catdata[catdata$departement_code %in% c("75","77","78",91:95),]
 # semi meteo
 DSKdata_idf <- DSKdata[DSKdata$departement_code %in% c("75","77","78",91:95),]
 
 ## 2.4.2 Création du subset pour l'AL:
 # signalements
-humdata_al <- humdata[ humdata$departement_code %in% c("54","55","57","88","67","68"),]
+catdata_al <- catdata[ catdata$departement_code %in% c("54","55","57","88","67","68"),]
 # semi meteo
 DSKdata_al <- DSKdata[ DSKdata$departement_code %in% c("54","55","57","88","67","68"),]
 
 ### 2.4.3 Création du subset pour RA:
 # signalements
-humdata_ra <- humdata[ humdata$departement_code %in% c("01","07","26","38","42","69","73","74"),]
+catdata_ra <- catdata[ catdata$departement_code %in% c("01","07","26","38","42","69","73","74"),]
 # semi meteo
 DSKdata_ra <- DSKdata[ DSKdata$departement_code %in% c("01","07","26","38","42","69","73","74"),]
 
 ### 2.4.3. Sélection de la période hivernale "longue" (6 mois)
 # signalements
-humdata_winter17_long <- humdata[humdata$date_piqure_saisie >= "2017-10-01" & humdata$date_piqure_saisie <= "2018-03-31",] 
-humdata_winter18_long <- humdata[humdata$date_piqure_saisie >= "2018-10-01" & humdata$date_piqure_saisie <= "2019-03-31",] 
-humdata_winter19_long <- humdata[humdata$date_piqure_saisie >= "2019-10-01" & humdata$date_piqure_saisie <= "2020-03-31",] 
-humdata_winter_long <-rbind(humdata_winter17_long, humdata_winter18_long, humdata_winter19_long)
+catdata_winter17_long <- catdata[catdata$date_piqure_saisie >= "2017-10-01" & catdata$date_piqure_saisie <= "2018-03-31",] 
+catdata_winter18_long <- catdata[catdata$date_piqure_saisie >= "2018-10-01" & catdata$date_piqure_saisie <= "2019-03-31",] 
+catdata_winter19_long <- catdata[catdata$date_piqure_saisie >= "2019-10-01" & catdata$date_piqure_saisie <= "2020-03-31",] 
+catdata_winter_long <-rbind(catdata_winter17_long, catdata_winter18_long, catdata_winter19_long)
 # semi meteo
 DSKdata_winter17_long <- DSKdata[DSKdata$date_releve >= "2017-10-01" & DSKdata$date_releve <= "2018-03-31",]
 DSKdata_winter18_long <- DSKdata[DSKdata$date_releve >= "2018-10-01" & DSKdata$date_releve <= "2019-03-31",]
@@ -156,10 +160,10 @@ DSKdata_winter_long <-rbind(DSKdata_winter17_long, DSKdata_winter18_long, DSKdat
 
 ### 2.4.3. Sélection de la période hivernale "courte" (4 mois)
 # signalements
-humdata_winter17_short <- humdata[humdata$date_piqure_saisie >= "2017-11-01" & humdata$date_piqure_saisie <= "2018-02-28",] 
-humdata_winter18_short <- humdata[humdata$date_piqure_saisie >= "2018-11-01" & humdata$date_piqure_saisie <= "2019-02-28",] 
-humdata_winter19_short <- humdata[humdata$date_piqure_saisie >= "2019-11-01" & humdata$date_piqure_saisie <= "2020-02-28",] 
-humdata_winter_short <-rbind(humdata_winter17_short, humdata_winter18_short, humdata_winter19_short)
+catdata_winter17_short <- catdata[catdata$date_piqure_saisie >= "2017-11-01" & catdata$date_piqure_saisie <= "2018-02-28",] 
+catdata_winter18_short <- catdata[catdata$date_piqure_saisie >= "2018-11-01" & catdata$date_piqure_saisie <= "2019-02-28",] 
+catdata_winter19_short <- catdata[catdata$date_piqure_saisie >= "2019-11-01" & catdata$date_piqure_saisie <= "2020-02-28",] 
+catdata_winter_short <-rbind(catdata_winter17_short, catdata_winter18_short, catdata_winter19_short)
 # semi meteo
 DSKdata_winter17_short <- DSKdata[DSKdata$date_releve >= "2017-11-01" & DSKdata$date_releve <= "2018-02-28",]
 DSKdata_winter18_short <- DSKdata[DSKdata$date_releve >= "2018-11-01" & DSKdata$date_releve <= "2019-02-28",]
@@ -167,8 +171,8 @@ DSKdata_winter19_short <- DSKdata[DSKdata$date_releve >= "2019-11-01" & DSKdata$
 DSKdata_winter_short <-rbind(DSKdata_winter17_short, DSKdata_winter18_short, DSKdata_winter19_short)
 
 ## Nettoyage des variables inutiles
-rm(list = c(paste('humdata_winter', 17:19, '_long', sep=''),
-                paste('humdata_winter', 17:19, '_short', sep=''),
+rm(list = c(paste('catdata_winter', 17:19, '_long', sep=''),
+                paste('catdata_winter', 17:19, '_short', sep=''),
                         paste('DSKdata_winter', 17:19, '_long', sep=''),
                                 paste('DSKdata_winter', 17:19, '_short', sep='') ) )
 
@@ -279,7 +283,7 @@ ic_table_maker <- function(reportingdf, randomdf, paramvector, calcul){
   ic_table <- list()
   
   # boucle de calcule implementant la fonction quantile
-  # avec filtrage par le vecteur vectornames sur le dataframe humdata
+  # avec filtrage par le vecteur vectornames sur le dataframe catdata
   for (name in paramvector ){
   
           # isolation de la colonne cible pour chaque iteration de la boucle
@@ -581,10 +585,10 @@ weatherPlotGrid <- function(param, mode){
                       # 'uvindex'='UV Index (scale 1 to 10)'
                       )
     
-    datalist <- list('france'=list('name'='France', 'report'=humdata, 'witness'=DSKdata_700avg ),
-                     'idf'=list('name'='île-de-France', 'report'=humdata_idf, 'witness'=DSKdata_700avg_idf ),
-                     'al'=list('name'='Alsace', 'report'=humdata_al,'witness'=DSKdata_700avg_al ),
-                     'ra'=list('name'='Rhône-Alpes', 'report'=humdata_ra, 'witness'=DSKdata_700avg_ra )
+    datalist <- list('france'=list('name'='France', 'report'=catdata, 'witness'=DSKdata_700avg ),
+                     'idf'=list('name'='île-de-France', 'report'=catdata_idf, 'witness'=DSKdata_700avg_idf ),
+                     'al'=list('name'='Alsace', 'report'=catdata_al,'witness'=DSKdata_700avg_al ),
+                     'ra'=list('name'='Rhône-Alpes', 'report'=catdata_ra, 'witness'=DSKdata_700avg_ra )
     )
     
     graphlist <- list()
@@ -602,7 +606,7 @@ weatherPlotGrid <- function(param, mode){
                    'Solstice'='grey50')
       # Explication détaillée du graphique
       # la date de la piqûre est en abscisse
-      # la donnée principale est tirée du dataframe humdata qui représente la table de donnée 
+      # la donnée principale est tirée du dataframe catdata qui représente la table de donnée 
       # de signalements citik_humains_clean_weather_strict.csv
       # dans mes script je travaille directememnt sur la base de donnée géographique postgis
       # la donnée météo témoin DSKdata_700avg provient de la table darksky_maille_700_avg
@@ -650,8 +654,8 @@ weatherPlotGrid <- function(param, mode){
                    alpha=.8,
                    size=.5)+
         #titre du graph
-        ggtitle(paste('Profil temporel de "',paramname,'" associée aux 14 657 lieux et dates de signalements comparés 
-                               à ceux des mêmes dates mais pour un semis régulier de lieux: ',region,' de 2017-03-31 à 2020-04-01'))+
+        ggtitle(paste('Profil temporel de "',paramname,'" associée aux ',nrow(catdata),' lieux et dates de signalements comparés 
+                               à ceux des mêmes dates mais pour un semis régulier de lieux: ',region,' de 2017-03-31 à 2020-04-01' -chats))+
         xlab(label = 'Date')+
         ylab(label=paramname)+
         labs(color='Légende: ')+
@@ -663,11 +667,11 @@ weatherPlotGrid <- function(param, mode){
         guides(col=guide_legend(nrow = 1))+
         #Cette ligne est facultative, elle sert uniquement au cas où on a besoin
         #de zoom sur une période de l'année ou pour restreindre le champ temporel
-        scale_y_continuous( breaks = seq(floor(min(humdata[,param], na.rm = T)),
-                                         ceiling(max(humdata[,param], na.rm = T)),
+        scale_y_continuous( breaks = seq(floor(min(catdata[,param], na.rm = T)),
+                                         ceiling(max(catdata[,param], na.rm = T)),
                                          by=4),
-                            limits = c(floor( min(humdata[,param], na.rm = T)),
-                                       ceiling(max(humdata[,param], na.rm = T)) ) )+
+                            limits = c(floor( min(catdata[,param], na.rm = T)),
+                                       ceiling(max(catdata[,param], na.rm = T)) ) )+
         scale_x_date( expand = c(0,0),
                       limits=as.Date( c('2017-03-31','2020-04-01')),
                       date_labels = '%b %Y',
@@ -727,6 +731,14 @@ weatherPlotGrid <- function(param, mode){
     
 }
 
+export_csv_table <- function(table_obj){
+  
+  table_name <- deparse(substitute(table_obj))
+  table_name <- paste0(table_name,".csv")
+  write.csv(table_obj, table_name, quote = F)
+  
+}
+
 end_prep = Sys.time()
 print('Fin de la preparation des fonctions de calcul')
 benchmark(start, end_prep)
@@ -744,14 +756,17 @@ vectornames <- c("temperature",  "temperaturelow", "temperaturehigh", "humidity"
 
 ## Periode annuelle sur la France entier ou les trois regions d’etude
 # France entiere
-france_quartile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='quartile')
+france_quartile <- ic_table_maker(catdata, DSKdata, vectornames, calcul='quartile')
 datatable(france_quartile)
+export_csv_table(france_quartile)
 
-france_decile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='decile')
+france_decile <- ic_table_maker(catdata, DSKdata, vectornames, calcul='decile')
 datatable(france_decile)
+export_csv_table(france_decile)
 
-france_centile <- ic_table_maker(humdata, DSKdata, vectornames, calcul='centile')
+france_centile <- ic_table_maker(catdata, DSKdata, vectornames, calcul='centile')
 datatable(france_centile)
+export_csv_table(france_centile)
 
 print('Fin des calculs des tableaux d’intervals de confiance')
 
@@ -766,21 +781,25 @@ mf_paramnames <- c('temperature', 'temperature_nocturne', 'temperature_diurne',
 # Ces lignes calculent puis affichent le tableau des tests de Shapiro de normalite 
 shapiro_df <- shapiro_batch(dsk_paramnames[-12], mf_paramnames)
 datatable(shapiro_df)
+export_csv_table(shapiro_df)
 
 # Calcule de la table DSK vs MF au test t.test
 t <- t.test_batch(dsk_paramnames[-12], mf_paramnames)
 t <- t(t)
 datatable(t)
+export_csv_table(t)
 
 # Calcule de la table du test DSK vs MF pour le test de Wilcoxon
 w <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='wilcox')
 w <- t(w)
 datatable(w)
+export_csv_table(w)
 
 # Calcule de la table du test DSK vs MF pour le test de Kruskal-Wallis
 k <- kwcox_table(dsk_paramnames[-12], mf_paramnames, test='kruskal')
 k <- t(k)
 datatable(k)
+export_csv_table(k)
 
 print('Fin des tests statistiques')
 
@@ -808,9 +827,9 @@ f <- weatherPlotGrid('france', mode='region')
 plotsave(f, 'fig_4_profils_temporels_variables_meteo_associes_aux_lieux_dates_signalements_compares_aux_semis_reguliers_print_fr.png', format='landscape', extension='png')
 
 ### Fabrication rapide et automatique des graphiques human data vs DSK moyennes semi 700 pts
-h <- batch_histogram(humdata, DSKdata_700avg, dsk_paramnames, dsk_paramnames)
+h <- batch_histogram(catdata, DSKdata_700avg, dsk_paramnames, dsk_paramnames)
 weather_gridplot_h <- plot_grid(plotlist=h, labels = "AUTO", ncol=2, nrow = 3 , align = 'hv')
-title_text_h <- paste('Profils météorologiques associés aux ',nrow(humdata),' lieux et dates de signalements comparés à ceux des mêmes dates mais pour un semis régulier de lieux (France, Janvier 2017 – 5 Avril 2020), ',nrow(DSKdata_700avg),' jours')
+title_text_h <- paste('Profils météorologiques associés aux ',nrow(catdata),' lieux et dates de signalements comparés à ceux des mêmes dates mais pour un semis régulier de lieux (France, Janvier 2017 – 5 Avril 2020), ',nrow(DSKdata_700avg),' jours -chats')
 title_h <- ggdraw(bkg) + draw_label(title_text_h, fontface='bold', size = 12, lineheight = 0.3)
 weather_gridplot_h <- plot_grid(title_h, weather_gridplot_h, ncol=1, rel_heights=c(.05, 1), align = 'hv') 
 plotsave(weather_gridplot_h, 'fig_5_profils_meteorologiques_associes_aux_lieux_dates_signalements_compares_aux_semis_regulier_des_lieux_print_fr.png', format='landscape', extension='png')
